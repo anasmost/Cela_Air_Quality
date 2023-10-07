@@ -5,8 +5,29 @@ import * as db from "./apis/db.js";
 
 const server = express();
 
+function queryValidator(req, res, next) {
+  if ("lat" in req.query && "lon" in req.query) {
+    for (const [key, value] of Object.entries(req.query)) {
+      if (!/\d+\.?\d*/.test(value))
+        return next({
+          error: new Error(`Bad query param: ${key}=${value}`),
+          message: `Bad query param: ${key}=${value}`,
+          status: 400,
+          statusText: "Bad Request",
+        });
+    }
+    next();
+  } else
+    next({
+      error: new Error("Missing query params"),
+      message: 'Missing query params : Provide both "lat" and "lon"',
+      status: 400,
+      statusText: "Bad Request",
+    });
+}
+
 export default server
-  .get("/air-quality", async (req, res, next) => {
+  .get("/air-quality", queryValidator, async (req, res, next) => {
     try {
       const { lat, lon } = req.query;
       const data = await iqair.getAirQuality({ lat, lon });
@@ -17,14 +38,14 @@ export default server
   })
   .get("/max-timestamp", async (req, res, next) => {
     try {
-      return res.json(await db.getDirtiestTimestamp());
+      return res.status(200).json(await db.getDirtiestTimestamp());
     } catch (err) {
       next(err);
     }
   })
   // eslint-disable-next-line no-unused-vars
   .use(async (err, req, res, _next) => {
-    const { error, ...response } = err;
+    const { error, status, ...response } = err;
     console.error(error);
-    return res.status(500).json(response);
+    return res.status(status ?? 500).json(response);
   });

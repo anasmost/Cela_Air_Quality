@@ -8,8 +8,12 @@ en utilisant iqair ( https://www.iqair.com/fr/commercial/air-quality-monitors/ai
 
 ### API REST
 - `/air-quality?lat=[latitude]&lon=[lon]` : requiert 2 arguments à la chaîne de requête et retourne le dernier calcul sur la polution de la ville la plus proche aux coordonnées géographiques renseignées.
-Si les paramètres ne sont pas renseignés, le serveur retourne les données correspondante à la ville de Paris :
-lat=48.856613 & lon=2.352222
+Si un paramètre manque, le serveur HTTP retourne une erreur :
+{
+    "message":"Missing query params : Provide both \"lat\" and \"lon\"",
+    "statusText":"Bad Request"
+}
+
 - `/max-timestamp` : retourne le plus récent des moments où la pollution de la ville de Paris à vécu la plus grande valeur de indice "aqius".
 
 ### CRON Task

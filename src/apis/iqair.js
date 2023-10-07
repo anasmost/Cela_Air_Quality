@@ -19,10 +19,18 @@ export async function getAirQuality({ lat = 48.856613, lon = 2.352222 }) {
 
     return { result: { pollution } };
   } catch (err) {
-    throw {
-      error: err,
-      message: err.response.data.data.message,
-      statusText: err.response.data.data.status,
-    };
+    if (err.response) {
+      throw {
+        error: err,
+        message: err.response.data.data.message,
+        statusText: err.response.data.data.status,
+      };
+    } else {
+      throw {
+        error: err,
+        message: err.message,
+        statusText: err.code,
+      };
+    }
   }
 }
