@@ -7,7 +7,7 @@ const iqair = axios.create({
   },
 });
 
-export async function getAirQuality({ lat = 35.98, lon = 140.33 }) {
+export async function getAirQuality({ lat = 48.856613, lon = 2.352222 }) {
   try {
     const {
       data: {

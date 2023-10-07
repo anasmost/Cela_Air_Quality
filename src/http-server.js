@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
-import * as iqair from "../apis/iqair.js";
-import * as db from "../apis/db.js";
+import * as iqair from "./apis/iqair.js";
+import * as db from "./apis/db.js";
 
 const server = express();
 

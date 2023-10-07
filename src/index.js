@@ -1,5 +1,5 @@
-import server from "./http-server/index.js";
-import job from "./cron/index.js";
+import server from "./http-server.js";
+import job from "./cron.js";
 
 // HTTP server
 const PORT = process.env.PORT || 9000;

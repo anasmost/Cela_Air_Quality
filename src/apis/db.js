@@ -1,7 +1,7 @@
 import knex from "knex";
 
 const db = knex({
-  client: "pg",
+  client: process.env.DB_PROVIDER || "pg",
   connection: {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,

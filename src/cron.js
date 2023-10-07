@@ -1,6 +1,6 @@
 import { CronJob } from "cron";
-import * as iqair from "../apis/iqair.js";
-import * as db from "../apis/db.js";
+import * as iqair from "./apis/iqair.js";
+import * as db from "./apis/db.js";
 
 const job = new CronJob(
   "0 * * * * *",

@@ -1,47 +1,37 @@
-# Mini-Projet "AIR QUALITY":
-# But:
-Création d'un API REST en Node Js.
+# AIR QUALITY:
+# Technologies:
+NodeJS + BD de votre choix (La connexion du service utilise Knex).
 
-# Contexte:
-Le but de ce projet est de créer un API REST chargé d'exposer les informations sur la qualité de l'air d'une ville la plus proche à des coordonnées GPS
-en utilisant iqair ( https://www.iqair.com/fr/commercial/air-quality-monitors/airvisual-platform/api )
+# Fonctionnalités:
+C'est une API REST chargée d'exposer les informations sur la qualité de l'air d'une ville la plus proche à des coordonnées GPS
+en utilisant iqair ( https://www.iqair.com/fr/commercial/air-quality-monitors/airvisual-platform/api ), combinée à un service CRON qui alimente la BD associée avec les mise à jour régulière de la qualité de l'air de Paris.
+
+### API REST
+- `/air-quality?lat=[latitude]&lon=[lon]` : requiert 2 arguments à la chaîne de requête et retourne le dernier calcul sur la polution de la ville la plus proche aux coordonnées géographiques renseignées.
+Si les paramètres ne sont pas renseignés, le serveur retourne les données correspondante à la ville de Paris :
+lat=48.856613 & lon=2.352222
+- `/max-timestamp` : retourne le plus récent des moments où la pollution de la ville de Paris à vécu la plus grande valeur de indice "aqius".
+
+### CRON Task
+Chaque minute, ce service enrégistre dans la BD la plus récente valeur de l'indice de pollution "aqius" accompagné du moment (timestamp) associé
 
 
-# Tâches:
+# Installation:
 
 1. Configuration:
 -   s'inscrire sur "iqair" et créer un API KEY ( https://www.iqair.com/fr/dashboard/api )
     -   NOTE: L'activation d'une clé peut prendre jusqu'à 5 minutes. ( entretemps, vous pouvez donc prendre un café..sinon un smoothie serait pas mal aussi 🙂 )
--   tester la récupération de la qualité de l'air ( https://api-docs.iqair.com/ par longitude/latitude ) sur Postman/Insomnia ( ou CURL si vous êtes fan de ligne de commande )
-    -   l'endpoint ``v2/nearest_city`` de l'API iqair
+-   Créer une BD dans le DBMS de votre choix en lui associant un utilisateur propriétaire avec des droits de lecture et écriture nécessaires, les données desquels vous allez mettre dans le fichiers de configuration ".env" tel ce qui suit.
+-   Ajouter un fichier ".env" à la racine du projet qui contient les données de configuration nécessaire, à savoir :
 
-2. Intégration:
--   créer un API REST Node Js ( vous êtes libre de choisir le framework )
--   créer un endpoint ( à vous de décider du nom de ROUTE ) 
-    -   paramètre: les coordonnées longitude et latitude
-    -   dans cet endpoint, le serveur doit faire appel à l'api d'IQAIR pour récupérer la qualité de l'air ( à voir "nearest_city" dans leur documentation ) et retourner le format ci-dessous:
-    
-    {
-        "result":{
-            "pollution": {
-                "ts": "2019-08-04T01:00:00.000Z",
-                "aqius": 55,
-                "mainus": "p2",
-                "aqicn": 20,
-                "maincn": "p2"
-            }
-        }
-    }
+IQAIR_URL=[https://api.airvisual.com/v2/]
+IQAIR_KEY=[IQAIR_API_KEY]
 
-3. CRON:
--   implémenter un CRON qui va vérifier la qualité de l'air de Paris ( lat: 48.856613 long: 2.352222 ) toutes les minutes ( et le stocker dans la base ) + stocker aussi le date/time de la qualité de l'air.
+DB_PROVIDER= intitulé du serveur DB [pg | pg-native | sqlite3 | mysql | etc] ("pg" = PostgreSQL par défaut, consultez https://knexjs.org/guide/#node-js )
+DB_HOST=localhost (Hostname)
+DB_PORT=5432 (Port)
+DB_NAME=[Nom de la Base de données connectée à ce service, utlisée pour sauvegarder les données Iqair]
+DB_USER=[Nom d'utilisateur de ce service]
+DB_PASS=[Mot de passe]
 
--   ( optionel: ) ajouter un endpoint qui va retourner la DATETIME où la ville de Paris est la plus polluée ( en se basant sur les données collectées via le CRON )
- 
-Les données doivent être stockés en BDD ( libre à vous de définir la techno )
--   Ces implémentations doivent être documentés;
-
-## Point bonus:
--   Documentation
--   tests unitaires / intégrations
--   Docker/Makefile
+PORT=[Port qui sera utilisé par le serveur HTTP de l'API REST]
