@@ -1,4 +1,3 @@
-import "dotenv/config";
 import express from "express";
 import * as iqair from "./apis/iqair.js";
 import * as db from "./apis/db.js";
@@ -11,7 +10,6 @@ function queryValidator(req, res, next) {
       if (!/\d+\.?\d*/.test(value))
         return next({
           error: new Error(`Bad query param: ${key}=${value}`),
-          message: `Bad query param: ${key}=${value}`,
           status: 400,
           statusText: "Bad Request",
         });
@@ -19,8 +17,7 @@ function queryValidator(req, res, next) {
     next();
   } else
     next({
-      error: new Error("Missing query params"),
-      message: 'Missing query params : Provide both "lat" and "lon"',
+      error: new Error('Missing query params: we need both "lat" and "lon"'),
       status: 400,
       statusText: "Bad Request",
     });
@@ -47,5 +44,5 @@ export default server
   .use(async (err, req, res, _next) => {
     const { error, status, ...response } = err;
     console.error(error);
-    return res.status(status ?? 500).json(response);
+    return res.status(status || 500).json({ ...response, message: error.message });
   });

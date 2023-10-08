@@ -34,3 +34,5 @@ export async function getDirtiestTimestamp() {
 
   return { timestamp: rows[0].max };
 }
+
+export default db;
